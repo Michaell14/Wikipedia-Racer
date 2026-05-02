@@ -75,22 +75,19 @@ The codebase is divided into two main components:
   When you first load the application, you will be greeted by the lobby screen.
   - **Bot Move Delay:** You can configure the difficulty of the AI bot. Lowering the delay (in seconds) makes the bot move faster, while a higher delay gives you more time to read and click.
   - Click **"Generate Random Race"** to fetch a random start and target article.
-   <img src="assets/mainscreen.png" alt="Alt text" width="200" align="center">
+   <img src="assets/mainscreen.png" alt="Main Screen" width="500" align="center">
 
 2. **The Race View:**
   Once a race is generated, you will see the "Ready?" screen showing the start and target articles.
   - Click **"START RACE!"** to begin.
   - **Main Panel:** A fully interactive Wikipedia iframe locked to the game's ecosystem. You must navigate using only the blue hyperlinks in the article text.
   - **Sidebar Panel:** Displays the target article, a live game timer, and a real-time activity log of the bot's path.
-   *[Insert Screenshot: Active Game View (Iframe & Sidebar)]*
-   `<!-- Screenshot placeholder: active_game.png -->`
+   <img src="assets/sidepanels.png" alt="Side Panel Screen" width="500" align="center">
 3. **Bot Activity Log:**
   The bot's progress is broadcasted via WebSockets in real-time. You can watch exactly which pages the bot is visiting as it attempts to find the target.
-   *[Insert Screenshot: Bot Activity Log scrolling]*
-   `<!-- Screenshot placeholder: bot_log.png -->`
+   <img src="assets/botactivity.png" alt="Bot Activity Screen" width="500" align="center">
 4. **Victory/Defeat Screen:**
   The game ends when either you or the bot reaches the target article.
   - If the bot wins, the defeat screen will display the exact path the AI took to beat you, allowing you to analyze its semantic traversal logic.
-   *[Insert Screenshot: Game Over Screen showing AI Path]*
-   `<!-- Screenshot placeholder: game_over.png -->`
+  <img src="assets/botwin.png" alt="Bot Win Screen" width="500" align="center">
 
