@@ -17,7 +17,7 @@
 The codebase is divided into two main components:
 
 - `**frontend/`**: A React application built with TypeScript, Vite, and shadcn/ui. Handles the user interface, Wikipedia iframe rendering, and real-time WebSocket communication.
-- `**backend/**`: A FastAPI application using SQLAlchemy and SQLite. Handles Wikipedia scraping, link caching, graph traversal, and NLP embeddings using `all-mpnet-base-v2`.
+- `**backend/`**: A FastAPI application using SQLAlchemy and SQLite. Handles Wikipedia scraping, link caching, graph traversal, and NLP embeddings using `all-mpnet-base-v2`.
 
 ### 2. User Manual
 
@@ -75,8 +75,8 @@ The codebase is divided into two main components:
   When you first load the application, you will be greeted by the lobby screen.
   - **Bot Move Delay:** You can configure the difficulty of the AI bot. Lowering the delay (in seconds) makes the bot move faster, while a higher delay gives you more time to read and click.
   - Click **"Generate Random Race"** to fetch a random start and target article.
-   *[Insert Screenshot: Lobby Screen & Game Settings]*
-   `<!-- Screenshot placeholder: lobby.png -->`
+   <img src="assets/mainscreen.png" alt="Alt text" width="200" align="center">
+
 2. **The Race View:**
   Once a race is generated, you will see the "Ready?" screen showing the start and target articles.
   - Click **"START RACE!"** to begin.
