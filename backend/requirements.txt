@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+httpx
+beautifulsoup4
+sentence-transformers
+torch
+numpy
+sqlalchemy
+databases[sqlite]
+aiosqlite
+greenlet
+python-multipart
