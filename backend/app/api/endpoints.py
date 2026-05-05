@@ -68,7 +68,7 @@ async def proxy_wikipedia(session_id: str, page_title: str):
     if not html:
         raise HTTPException(status_code=404, detail=f"Page not found: {page_title}")
     
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "lxml")
     
     # In Action API 'parse', the title isn't in a <title> tag in the snippet.
     # But we can assume the title we requested or handled by redirects.
@@ -116,6 +116,13 @@ async def proxy_wikipedia(session_id: str, page_title: str):
              a["target"] = "_blank"
 
     # Inject base styles to keep it readable
+    if not soup.head:
+        head = soup.new_tag("head")
+        if soup.html:
+            soup.html.insert(0, head)
+        else:
+            soup.insert(0, head)
+    
     style_tag = soup.new_tag("style")
     style_tag.string = """
         body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 2rem; color: #333; }
@@ -124,13 +131,9 @@ async def proxy_wikipedia(session_id: str, page_title: str):
         a { color: #0645ad; text-decoration: none; }
         a:hover { text-decoration: underline; }
     """
-    
-    # Wrap in a basic HTML structure if it's just a snippet
-    full_html = f"<html><head></head><body>{soup.prettify()}</body></html>"
-    new_soup = BeautifulSoup(full_html, "html.parser")
-    new_soup.head.append(style_tag)
+    soup.head.append(style_tag)
 
-    return Response(content=new_soup.prettify(), media_type="text/html")
+    return Response(content=str(soup), media_type="text/html")
 
 @router.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
@@ -152,6 +155,10 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                     # Start bot
                     bot = BotEngine(session.id, session.start_page, session.target_page, game_manager)
                     session.bot_task = asyncio.create_task(bot.run())
+            
+            elif data.get("type") == "UPDATE_SETTINGS":
+                session.bot_delay = data.get("botDelay", session.bot_delay)
+                await session.broadcast({"type": "SETTINGS_UPDATED", "botDelay": session.bot_delay})
             
             elif data.get("type") == "PING":
                 await websocket.send_json({"type": "PONG"})

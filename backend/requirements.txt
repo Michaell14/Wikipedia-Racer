@@ -10,3 +10,4 @@ databases[sqlite]
 aiosqlite
 greenlet
 python-multipart
+lxml

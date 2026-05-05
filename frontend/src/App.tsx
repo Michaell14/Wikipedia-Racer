@@ -8,7 +8,10 @@ import {
   RefreshCw,
   Search,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Settings,
+  LogOut,
+  Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -18,6 +21,14 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   Tooltip,
   TooltipContent,
@@ -109,6 +120,8 @@ function App() {
         } else if (msg.type === 'BOT_RESTARTED') {
           setBotThinking(false);
           setBotPath([data.start_page]);
+        } else if (msg.type === 'SETTINGS_UPDATED') {
+          setBotDelay(msg.botDelay);
         } else if (msg.type === 'RACE_OVER') {
           setBotThinking(false);
           setWinner(msg.winner);
@@ -138,6 +151,27 @@ function App() {
     }
   };
 
+  const handleUpdateDelay = (newDelay: number) => {
+    setBotDelay(newDelay);
+    if (socketRef.current && race?.status === 'playing') {
+      socketRef.current.send(JSON.stringify({ type: 'UPDATE_SETTINGS', botDelay: newDelay }));
+    }
+  };
+
+  const resetGame = () => {
+    if (socketRef.current) {
+      socketRef.current.close();
+      socketRef.current = null;
+    }
+    setRace(null);
+    setBotPath([]);
+    setWinner(null);
+    setStartTime(null);
+    setCurrentTime(0);
+    setBotThinking(false);
+    setError(null);
+  };
+
   const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -160,6 +194,41 @@ function App() {
                   {formatTime(currentTime)}
                 </Badge>
               )}
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Game Settings</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <div className="px-2 py-2">
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="menu-bot-delay" className="text-xs font-medium flex items-center gap-2">
+                        <Clock className="h-3 w-3" /> Bot Delay: {botDelay}s
+                      </Label>
+                      <Input 
+                        id="menu-bot-delay"
+                        type="range" 
+                        min="1" 
+                        max="30"
+                        step="1"
+                        value={botDelay} 
+                        onChange={(e) => handleUpdateDelay(Number(e.target.value))} 
+                        className="h-6"
+                      />
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={resetGame} className="text-destructive focus:text-destructive cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Quit Race / Reset</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
